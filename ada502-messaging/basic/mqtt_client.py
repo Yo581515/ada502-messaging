@@ -1,34 +1,43 @@
 import logging
+from logging.handlers import TimedRotatingFileHandler
+
 import argparse
 import os
-
 from decouple import config
+import yaml
 
 import paho.mqtt.client as paho
 from paho import mqtt
 
-import yaml
+# basic logging
+import logging
+
+logging.basicConfig(filename='mqtt_client.log',
+                    format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
+                    level=logging.DEBUG)
+
+logging.info("MQTT Client Testing")
 
 
 class ConfigurationException(Exception):
     pass
 
 
-# setting callbacks for different events to see status
+# callbacks functions for the different events to see status
 def on_connect(client, userdata, flags, rc, properties=None):
-    print("CONNACK received with code %s." % rc)
+    logging.info("CONNACK received with code %s." % rc)
 
 
 def on_publish(client, userdata, mid, reason_code, properties):
-    print("mid: " + str(mid))
+    logging.info("mid: " + str(mid))
 
 
 def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-    print("Subscribed: " + str(mid) + " " + str(granted_qos))
+    logging.info("Subscribed: " + str(mid) + " " + str(granted_qos))
 
 
 def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    logging.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
 
 if __name__ == '__main__':
@@ -81,7 +90,7 @@ if __name__ == '__main__':
     client.subscribe("weatherdata/#", qos=1)
 
     # a single publish
-    client.publish("weatherdata/temperature", payload="hot", qos=1)
+    client.publish(BROKER_TOPIC, payload="hot", qos=1)
 
     # loop_forever for simplicity
     client.loop_forever()
