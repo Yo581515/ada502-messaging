@@ -1,11 +1,17 @@
+import logging
+import argparse
+import os
+
 from decouple import config
 
 import paho.mqtt.client as paho
 from paho import mqtt
 
-# read HiveMQ credentials from .env file
-USERNAME = config('USERNAME')
-PASSWORD = config('PASSWORD')
+import yaml
+
+
+class ConfigurationException(Exception):
+    pass
 
 
 # setting callbacks for different events to see status
@@ -25,29 +31,60 @@ def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
 
-client = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2, client_id="ada502",
-                     userdata=None, protocol=paho.MQTTv5)
+if __name__ == '__main__':
 
-# setting callbacks functions on the client object
-client.on_connect = on_connect
-client.on_subscribe = on_subscribe
-client.on_message = on_message
-client.on_publish = on_publish
+    # read HiveMQ credentials from .env file
+    try:
+        USERNAME = config('USERNAME')
+        PASSWORD = config('PASSWORD')
 
-# enable TLS for secure connection
-client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+    except Exception as e:
+        raise ConfigurationException(f"Error when reading credentials: {e}")
 
-# set username and password
-client.username_pw_set(USERNAME, PASSWORD)
+    # read configuration from config file
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--configfile", required=True, help="Path to the config file")
+    args = parser.parse_args()
 
-# connect to HiveMQ Cloud Messaging Cluster
-client.connect("b326a3a8af7e4e10bcb3627073cbd298.s1.eu.hivemq.cloud", 8883)
+    if not os.path.exists(args.configfile):
+        raise ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
 
-# subscribe to all topics of encyclopedia by using the wildcard "#"
-client.subscribe("weatherdata/#", qos=1)
+    try:
+        with open(args.configfile) as f:
+            conf = yaml.load(f, Loader=yaml.FullLoader)
+            BROKER_HOST = conf['BROKER_HOST']
+            BROKER_PORT = conf['BROKER_PORT']
+            BROKER_TOPIC = conf['BROKER_TOPIC']
 
-# a single publish
-client.publish("weatherdata/temperature", payload="hot", qos=1)
+    except Exception as e:
+        raise ConfigurationException(f"Error when reading from config file: {e}")
 
-# loop_forever for simplicity
-client.loop_forever()
+    client = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2, client_id="ada502",
+                         userdata=None, protocol=paho.MQTTv5)
+
+    # setting callbacks functions on the client object
+    client.on_connect = on_connect
+    client.on_subscribe = on_subscribe
+    client.on_message = on_message
+    client.on_publish = on_publish
+
+    # enable TLS for secure connection
+    client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+
+    # set username and password
+    client.username_pw_set(USERNAME, PASSWORD)
+
+    # connect to HiveMQ Cloud Messaging Cluster
+    client.connect(BROKER_HOST, BROKER_PORT)
+
+    # subscribe to all topics of encyclopedia by using the wildcard "#"
+    client.subscribe("weatherdata/#", qos=1)
+
+    # a single publish
+    client.publish("weatherdata/temperature", payload="hot", qos=1)
+
+    # loop_forever for simplicity
+    client.loop_forever()
+
+
+
