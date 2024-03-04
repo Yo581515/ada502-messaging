@@ -7,7 +7,6 @@ from decouple import config
 import yaml
 
 import queue
-import threading
 import signal
 
 from abc import abstractmethod
@@ -27,8 +26,8 @@ class SubscriberClient:
     def __init__(self, broker, port, topic, qos, cid):
 
         # load credentials
-        self.USERNAME = config('USERNAME')
-        self.PASSWORD = config('PASSWORD')
+        self.USERNAME = config('BROKER_USERNAME')
+        self.PASSWORD = config('BROKER_PASSWORD')
 
         # create a client object and configure
         self.subscriber = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2,
@@ -58,9 +57,6 @@ class SubscriberClient:
 
         self.msg_queue.put(json_str)
 
-    @abstractmethod
-    def process(self, in_message):
-        pass
 
     def subscriber_start(self):
 

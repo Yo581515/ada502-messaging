@@ -22,8 +22,8 @@ class PublisherClient:
     def __init__(self, broker, port, topic, qos, cid):
 
         # load credentials
-        self.USERNAME = config('USERNAME')
-        self.PASSWORD = config('PASSWORD')
+        self.USERNAME = config('BROKER_USERNAME')
+        self.PASSWORD = config('BROKER_PASSWORD')
 
         # create a client object and configure
         self.publisher = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2,
@@ -87,8 +87,8 @@ if __name__ == '__main__':
 
     # read HiveMQ credentials from .env file
     try:
-        USERNAME = config('USERNAME')
-        PASSWORD = config('PASSWORD')
+        USERNAME = config('BROKER_USERNAME')
+        PASSWORD = config('BROKER_PASSWORD')
 
     except Exception as e:
         raise ConfigurationException(f"Error when reading credentials: {e}")

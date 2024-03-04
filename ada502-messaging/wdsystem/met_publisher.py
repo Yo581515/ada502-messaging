@@ -10,8 +10,8 @@ if __name__ == '__main__':
 
     # read HiveMQ credentials from .env file
     try:
-        USERNAME = config('USERNAME')
-        PASSWORD = config('PASSWORD')
+        USERNAME = config('BROKER_USERNAME')
+        PASSWORD = config('BROKER_PASSWORD')
 
     except Exception as e:
         raise mqtt_publisher.ConfigurationException(f"Error when reading credentials: {e}")
