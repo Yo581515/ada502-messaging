@@ -99,10 +99,10 @@ class SubscriberClient:
         self.do_continue = False
 
     @abstractmethod
-    def process(self, in_message):
+    def process_one(self, in_message):
         pass
 
-    def loop(self):
+    def process(self):
 
         while self.do_continue:
 
@@ -114,16 +114,12 @@ class SubscriberClient:
 
                 logging.info('SubscriberClient [Queue:pre-process]')
 
-                self.process(in_message)
+                self.process_one(in_message)
 
                 logging.info('SubscriberClient [Queue:post-process]')
 
             except queue.Empty:
-                pass
-
-        logging.info("Stopping subscriber client ...")
-
-        self.subscriber.loop_stop()
+                logging.info('SubscriberClient [Queue:empty]')
 
     def run(self):
 
@@ -131,11 +127,16 @@ class SubscriberClient:
         signal.signal(signal.SIGTERM, self.termination_gracefully)
 
         logging.info("Starting subscriber client ...")
+
         self.subscriber_start()
 
-        runner = threading.Thread(target=self.loop)
+        self.loop()
 
-        runner.start()
+        logging.info("Stopping subscriber client ...")
+
+        self.subscriber.loop_stop()
+
+        logging.info("Stopped subscriber client ...")
 
 
 class ConfigurationException(Exception):
