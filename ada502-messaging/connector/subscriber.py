@@ -15,7 +15,7 @@ from abc import abstractmethod
 # basic logging
 import logging
 
-logging.basicConfig(filename='mqtt_client.log',
+logging.basicConfig(filename='subscriber_client.log',
                     format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
                     level=logging.DEBUG)
 
@@ -161,7 +161,7 @@ if __name__ == '__main__':
             BROKER_PORT = conf['BROKER_PORT']
             BROKER_TOPIC = conf['BROKER_TOPIC']
             TOPIC_QOS = conf['TOPIC_QOS']
-            CLIENT_ID = conf['CLIENT_ID']
+            CLIENT_ID = conf['SUBSCRIBER_CLIENT_ID']
 
     except Exception as e:
         raise ConfigurationException(f"Error when reading from config file: {e}")

@@ -87,10 +87,10 @@ if __name__ == '__main__':
     client.connect(BROKER_HOST, BROKER_PORT)
 
     # subscribe to all topics of encyclopedia by using the wildcard "#"
-    client.subscribe("weatherdata/#", qos=1)
+    client.subscribe(BROKER_TOPIC, qos=1)
 
     # a single publish
-    client.publish(BROKER_TOPIC, payload="hot", qos=1)
+    client.publish(BROKER_TOPIC, payload="Hello World Basic Broker Test", qos=1)
 
     # loop_forever for simplicity
     client.loop_forever()
