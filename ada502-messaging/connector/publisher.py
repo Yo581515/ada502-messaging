@@ -62,7 +62,7 @@ class PublisherClient:
 
         logging.info(f'Publisher client publishing {message} to {self.BROKER_TOPIC} ...')
 
-        result = self.publisher.publish(BROKER_TOPIC, payload=message, qos=self.TOPIC_QOS)
+        result = self.publisher.publish(self.BROKER_TOPIC, payload=message, qos=self.TOPIC_QOS)
 
         logging.info(f'Publisher client published')
 

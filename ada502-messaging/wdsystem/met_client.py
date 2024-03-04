@@ -127,7 +127,6 @@ class METClient:
                     # string to datatime object required
                     timestamp = reference_time  # assume that observations have the same time stamp
 
-                    # TODO: rewrite to use a switch
                     if station_observation['elementId'] == 'air_temperature':
                         temperature = station_observation['value']
                     elif station_observation['elementId'] == 'relative_humidity':
@@ -136,12 +135,11 @@ class METClient:
                         wind_speed = station_observation['value']
 
                 observation = Observation(temperature=temperature,
-                                            longitude=longitude,
-                                            latitude=latitude,
-                                            humidity=relative_humidity,
-                                            wind_speed=wind_speed,
-                                            time=str(timestamp.astimezone()) # TODO: TIMEZONE
-                                            )
+                                          longitude=longitude,
+                                          latitude=latitude,
+                                          humidity=relative_humidity,
+                                          wind_speed=wind_speed,
+                                          time=str(timestamp.astimezone()))
 
                 observations.append(observation)
 
@@ -160,17 +158,23 @@ class METClient:
 
         return observations
 
+    def fetch_latest_observation(self, longitude, latitude) -> Observation:
+
+        start = datetime.datetime.now() - datetime.timedelta(days=1)
+        end = datetime.datetime.now()
+
+        observations = self.fetch_observations(longitude, latitude, start, end)
+
+        latest = observations[-1]
+
+        return latest
+
 
 if __name__ == '__main__':
 
     client = METClient()
 
-    start = datetime.datetime.now() - datetime.timedelta(days=1)
-    end = datetime.datetime.now()
-
-    observations = client.fetch_observations(5.3505234505, 60.3692257067, start, end)
-
-    latest = observations[-1]
+    latest = client.fetch_latest_observation(5.3505234505, 60.3692257067)
 
     print(latest.to_json_data())
 
