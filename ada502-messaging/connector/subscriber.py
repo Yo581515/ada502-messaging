@@ -47,9 +47,6 @@ class SubscriberClient:
     def on_connect(self, client, userdata, flags, rc, properties=None):
         logging.info("CONNACK received with code %s." % rc)
 
-    def on_publish(self, client, userdata, mid, reason_code, properties):
-        logging.info("mid: " + str(mid))
-
     def on_subscribe(self, client, userdata, mid, granted_qos, properties=None):
         logging.info("Subscribed: " + str(mid) + " " + str(granted_qos))
 
@@ -89,14 +86,10 @@ class SubscriberClient:
         self.do_continue = False
 
     def interrupt_handler(self, *args):
-        logging.info("int_gracefully ...")
+        logging.info("Subscriber client interrupted ...")
         self.do_continue = False
 
         # kill <pid> | (kill -9 will not trigger handler)
-
-    def termination_gracefully(self, *args):
-        logging.info("term_gracefully ...")
-        self.do_continue = False
 
     @abstractmethod
     def process_one(self, in_message):
@@ -112,6 +105,7 @@ class SubscriberClient:
 
                 in_message = self.msg_queue.get(timeout=self.QUEUE_GET_TIMEOUT)
 
+                logging.info(f'SubscriberClient [Queue:got] {in_message}')
                 logging.info('SubscriberClient [Queue:pre-process]')
 
                 self.process_one(in_message)
@@ -124,13 +118,12 @@ class SubscriberClient:
     def run(self):
 
         signal.signal(signal.SIGINT, self.interrupt_handler)
-        signal.signal(signal.SIGTERM, self.termination_gracefully)
 
         logging.info("Starting subscriber client ...")
 
         self.subscriber_start()
 
-        self.loop()
+        self.process()
 
         logging.info("Stopping subscriber client ...")
 
