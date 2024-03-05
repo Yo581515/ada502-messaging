@@ -1,3 +1,6 @@
+import datetime
+import random
+
 import connector.publisher as mqtt_publisher
 import connector.configuration as mqtt_configuration
 
@@ -29,6 +32,17 @@ class METPublisher:
         for observation in latest:
             self.publisher_client.publish_one(observation.to_json_data())
 
+    def publish_fake_latest_observation(self):
+
+        latest = self.met_client.fetch_latest_observation(self.longitude, self.latitude)
+
+        latest.time = datetime.datetime.now().astimezone().isoformat()
+        latest.temperature = latest.temperature + 5 * random.random()
+        latest.humidity = latest.humidity + 5 * random.random()
+        latest.wind_speed = latest.wind_speed + 2 * random.random()
+
+        self.publisher_client.publish_one(latest.to_json_data())
+
 
 if __name__ == '__main__':
 
@@ -36,7 +50,10 @@ if __name__ == '__main__':
 
     met_publisher = METPublisher(config_file, 5.3505234505, 60.3692257067)
 
-    met_publisher.publish_latest_observation()
+    # met_publisher.publish_latest_observation()
 
     # if publishing all observations
     # met_publisher.publish_latest_observations()
+
+    # publishing with current time stamp
+    met_publisher.publish_fake_latest_observation()

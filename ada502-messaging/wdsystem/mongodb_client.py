@@ -55,6 +55,7 @@ def get_mongodb_config(config_file: str) -> MongoDBConfig:
         return mongodb_config
 
 def convert_time(wd_json_data):
+
     try:
         wd_time = wd_json_data['time']
         date_time = datetime.datetime.fromisoformat(wd_time)
