@@ -3,40 +3,32 @@ from paho import mqtt
 
 import argparse
 import os
-from decouple import config
-import yaml
 
 import queue
 import signal
 
 from abc import abstractmethod
 
-# basic logging
 import logging
 
+from config import ConfigurationException, ClientConfiguration
+
+# basic logging
 logging.basicConfig(filename='subscriber_client.log',
                     format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
                     level=logging.DEBUG)
 
-logging.info("MQTT Client Testing")
+logging.info("MQTT Subscriber Client Testing")
 
 
 class SubscriberClient:
 
-    def __init__(self, broker, port, topic, qos, cid):
+    def __init__(self, client_config: ClientConfiguration):
 
-        # load credentials
-        self.USERNAME = config('BROKER_USERNAME')
-        self.PASSWORD = config('BROKER_PASSWORD')
+        self.config = client_config
 
-        # create a client object and configure
         self.subscriber = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2,
-                                      client_id=cid, userdata=None, protocol=paho.MQTTv5)
-
-        self.BROKER_HOST = broker
-        self.BROKER_PORT = port
-        self.BROKER_TOPIC = topic
-        self.TOPIC_QOS = qos
+                                      client_id=self.config.CLIENT_ID, userdata=None, protocol=paho.MQTTv5)
 
         # setup internal message queue
         self.msg_queue = queue.Queue()
@@ -44,19 +36,18 @@ class SubscriberClient:
         self.QUEUE_GET_TIMEOUT = 30
 
     def on_connect(self, client, userdata, flags, rc, properties=None):
-        logging.info("CONNACK received with code %s." % rc)
+        logging.info(f'on_connect: CONNACK {rc}')
 
     def on_subscribe(self, client, userdata, mid, granted_qos, properties=None):
-        logging.info("Subscribed: " + str(mid) + " " + str(granted_qos))
+        logging.info(f'on_subscribe: {mid} {granted_qos}')
 
     def on_message(self, client, userdata, msg):
 
-        logging.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        logging.info(f'on_message: {msg.topic} {msg.qos} {msg.payload}')
 
-        json_str = (str(msg.payload.decode("utf-8")))
+        json_str = (str(msg.payload.decode("utf-8"))) # FIXME - remove?
 
-        self.msg_queue.put(json_str)
-
+        self.msg_queue.put(msg.payload)
 
     def subscriber_start(self):
 
@@ -68,13 +59,13 @@ class SubscriberClient:
         self.subscriber.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
         # set username and password
-        self.subscriber.username_pw_set(self.USERNAME, self.PASSWORD)
+        self.subscriber.username_pw_set(self.config.USERNAME, self.config.PASSWORD)
 
         # connect to HiveMQ Cloud Messaging Cluster
-        self.subscriber.connect(self.BROKER_HOST, self.BROKER_PORT)
+        self.subscriber.connect(self.config.BROKER_HOST, self.config.BROKER_PORT)
 
         # subscribe to all topics of encyclopedia by using the wildcard "#"
-        self.subscriber.subscribe(self.BROKER_TOPIC, qos=self.TOPIC_QOS)
+        self.subscriber.subscribe(self.config.BROKER_TOPIC, qos=self.config.TOPIC_QOS)
 
         self.subscriber.loop_start()
 
@@ -90,6 +81,8 @@ class SubscriberClient:
     @abstractmethod
     def process_one(self, in_message):
         pass
+        # subclasses of Subscriber client will implement this
+        # for the specific processing of incoming messages
 
     def process(self):
 
@@ -128,21 +121,8 @@ class SubscriberClient:
         logging.info("Stopped subscriber client ...")
 
 
-class ConfigurationException(Exception):
-    pass
-
-
 if __name__ == '__main__':
 
-    # read HiveMQ credentials from .env file
-    try:
-        USERNAME = config('USERNAME')
-        PASSWORD = config('PASSWORD')
-
-    except Exception as e:
-        raise ConfigurationException(f"Error when reading credentials: {e}")
-
-    # read configuration from config file
     parser = argparse.ArgumentParser()
     parser.add_argument("--configfile", required=True, help="Path to the config file")
     args = parser.parse_args()
@@ -150,18 +130,8 @@ if __name__ == '__main__':
     if not os.path.exists(args.configfile):
         raise ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
 
-    try:
-        with open(args.configfile) as f:
-            conf = yaml.load(f, Loader=yaml.FullLoader)
-            BROKER_HOST = conf['BROKER_HOST']
-            BROKER_PORT = conf['BROKER_PORT']
-            BROKER_TOPIC = conf['BROKER_TOPIC']
-            TOPIC_QOS = conf['TOPIC_QOS']
-            CLIENT_ID = conf['SUBSCRIBER_CLIENT_ID']
+    config = ClientConfiguration(args.configfile)
 
-    except Exception as e:
-        raise ConfigurationException(f"Error when reading from config file: {e}")
-
-    subscriber_client = SubscriberClient(BROKER_HOST, BROKER_PORT, BROKER_TOPIC, TOPIC_QOS, CLIENT_ID)
+    subscriber_client = SubscriberClient(config)
 
     subscriber_client.run()
