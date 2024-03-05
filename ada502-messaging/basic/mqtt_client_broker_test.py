@@ -1,22 +1,19 @@
-import logging
-from logging.handlers import TimedRotatingFileHandler
+import paho.mqtt.client as paho
+from paho import mqtt
 
 import argparse
 import os
 from decouple import config
 import yaml
 
-import paho.mqtt.client as paho
-from paho import mqtt
-
 # basic logging
 import logging
 
-logging.basicConfig(filename='mqtt_client.log',
+logging.basicConfig(filename='mqtt_client_broker.log',
                     format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
                     level=logging.DEBUG)
 
-logging.info("MQTT Client Testing")
+logging.info("MQTT Client Broker Testing")
 
 
 class ConfigurationException(Exception):
@@ -25,27 +22,27 @@ class ConfigurationException(Exception):
 
 # callbacks functions for the different events to see status
 def on_connect(client, userdata, flags, rc, properties=None):
-    logging.info("CONNACK received with code %s." % rc)
+    logging.info(f'on_connect: CONNACK {rc}')
 
 
 def on_publish(client, userdata, mid, reason_code, properties):
-    logging.info("mid: " + str(mid))
+    logging.info(f'on_publish: {mid} {reason_code}')
 
 
 def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-    logging.info("Subscribed: " + str(mid) + " " + str(granted_qos))
+    logging.info(f'on_subscribe: {mid} {granted_qos}')
 
 
 def on_message(client, userdata, msg):
-    logging.info(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    logging.info(f'on_message: {msg.topic} {msg.qos} {msg.payload}')
 
 
 if __name__ == '__main__':
 
-    # read HiveMQ credentials from .env file
+    # read broker credentials for authentication from .env file
     try:
-        USERNAME = config('USERNAME')
-        PASSWORD = config('PASSWORD')
+        USERNAME = config('BROKER_USERNAME')
+        PASSWORD = config('BROKER_PASSWORD')
 
     except Exception as e:
         raise ConfigurationException(f"Error when reading credentials: {e}")
