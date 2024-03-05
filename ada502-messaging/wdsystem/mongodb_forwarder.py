@@ -1,7 +1,6 @@
 import argparse
 import os
-from decouple import config
-import yaml
+
 
 import connector.subscriber as mqtt_subscriber
 import connector.configuration as mqtt_configuration
@@ -33,14 +32,9 @@ class MongoDBForwarder(mqtt_subscriber.SubscriberClient):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--configfile", required=True, help="Path to the config file")
-    args = parser.parse_args()
+    config_file = mqtt_configuration.get_config_file()
 
-    if not os.path.exists(args.configfile):
-        raise mqtt_configuration.ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
-
-    mongodb_forwarder = MongoDBForwarder(args.configfile)
+    mongodb_forwarder = MongoDBForwarder(config_file)
 
     mongodb_forwarder.run()
 

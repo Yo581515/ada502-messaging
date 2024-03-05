@@ -1,5 +1,10 @@
 # Messaging systems examples
 
+- HiveMQ: https://console.hivemq.cloud/
+- Thingspeak: https://thingspeak.com/
+- MongoDB: https://www.mongodb.com/
+- Paho MQTT: https://pypi.org/project/paho-mqtt/
+
 ## Installation
 
 Install required packages
@@ -18,7 +23,7 @@ export PYTHONPATH=<path>/ada502-messaging/ada502-messaging
 
 Basic testing of publishing and subscribing to a topic on a broker.
 
-Credentials for broker must be placed in an `.env` file with the following format
+Credentials for the broker must be placed in an `.env` file with the following format
 
 ```
 BROKER_USERNAME=
@@ -63,5 +68,17 @@ Running the subscriber and thingspeak forwarder:
 python3 thingspeak_forwarder.py --configfile config-ada502-tp-fwd.yml 
 ```
 
-## MongoDB forwarder
+Credentials for Thingspeak must be placed in an `.env` file
+
+### MongoDB forwarder
+
+```
+python3 mongodb_forwarder.py --configfile config-ada502-mgdb-fwd.yml 
+```
+
+Credentials for MongoDB must be placed in an `.env` file. The configuration file must be set according with the cluster, database, and collection being used.
+
+Remember to whitelist the IP address of the machine running the forwarder in the MongoDB cluster under network access.
+
+
 

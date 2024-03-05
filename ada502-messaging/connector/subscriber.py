@@ -11,14 +11,14 @@ from abc import abstractmethod
 
 import logging
 
-from connector.configuration import ConfigurationException, ClientConfiguration
+from connector.configuration import ClientConfiguration, get_config_file
 
 # basic logging
 logging.basicConfig(filename='subscriber_client.log',
                     format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
                     level=logging.DEBUG)
 
-logging.info("MQTT Subscriber Client Testing")
+logging.info("MQTT Subscriber Client module")
 
 
 class SubscriberClient:
@@ -123,14 +123,9 @@ class SubscriberClient:
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--configfile", required=True, help="Path to the config file")
-    args = parser.parse_args()
+    config_file = get_config_file()
 
-    if not os.path.exists(args.configfile):
-        raise ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
-
-    config = ClientConfiguration(args.configfile)
+    config = ClientConfiguration(config_file)
 
     subscriber_client = SubscriberClient(config)
 

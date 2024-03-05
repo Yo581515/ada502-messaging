@@ -3,15 +3,12 @@ from pymongo.server_api import ServerApi
 import certifi
 
 import datetime
-#from datetime import datetime
-
 import json
 
 from decouple import config
 import yaml
 
-import argparse
-import os
+from connector.configuration import get_config_file
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -171,14 +168,9 @@ class MongoDBClient:
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--configfile", required=True, help="Path to the config file")
-    args = parser.parse_args()
+    config_file = get_config_file()
 
-    if not os.path.exists(args.configfile):
-        raise MongoDBConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
-
-    mongodb_config = get_mongodb_config(args.configfile)
+    mongodb_config = get_mongodb_config(config_file)
 
     now = datetime.datetime.now()
 

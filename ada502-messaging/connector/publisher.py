@@ -2,19 +2,17 @@ import paho.mqtt.client as paho
 from paho import mqtt
 from paho.mqtt.client import MQTT_ERR_SUCCESS
 
-import argparse
-import os
 
 import logging
 
-from connector.configuration import ConfigurationException, ClientConfiguration
+from connector.configuration import ClientConfiguration, get_config_file
 
 # basic logging
 logging.basicConfig(filename='publisher_client.log',
                     format="%(asctime)s[%(levelname)s]:%(message)s", encoding='utf-8',
                     level=logging.DEBUG)
 
-logging.info("MQTT Publisher Client Testing")
+logging.info("MQTT Publisher Client module")
 
 
 class PublisherClient:
@@ -74,14 +72,9 @@ class PublisherClient:
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--configfile", required=True, help="Path to the config file")
-    args = parser.parse_args()
+    config_file = get_config_file()
 
-    if not os.path.exists(args.configfile):
-        raise ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
-
-    config = ClientConfiguration(args.configfile)
+    config = ClientConfiguration(config_file)
 
     publisher_client = PublisherClient(config)
 

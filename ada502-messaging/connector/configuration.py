@@ -1,6 +1,8 @@
 from decouple import config
 import yaml
 
+import argparse
+import os
 
 class ConfigurationException(Exception):
     pass
@@ -36,4 +38,13 @@ class ClientConfiguration:
                         f'CLIENT ID: {self.CLIENT_ID}'))
 
 
+def get_config_file():
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--configfile", required=True, help="Path to the config file")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.configfile):
+        raise ConfigurationException(f"Error: The configfile '{args.configfile}' does not exist.")
+
+    return args.configfile

@@ -94,9 +94,9 @@ class METClient:
         print(f'Fetch observation : {time_period}')
 
         parameters = {'sources': source,
-                        'referencetime': time_period,
-                        'elements': 'air_temperature,relative_humidity,wind_speed'
-                          }
+                      'referencetime': time_period,
+                      'elements': 'air_temperature,relative_humidity,wind_speed'
+                      }
 
         response = self.send_frost_request(self.observations_endpoint, parameters)
 
@@ -109,11 +109,7 @@ class METClient:
 
         observations = list()
 
-        source_id = None
-
         if len(data_list) > 1:
-
-            source_id = data_list[0]['sourceId']
 
             for data in data_list:
 
