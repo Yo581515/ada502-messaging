@@ -7,6 +7,10 @@ from decouple import config
 
 from datetime import datetime
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
 
 class ThingsPeakClient:
 
@@ -20,7 +24,7 @@ class ThingsPeakClient:
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    def forward_all(self, observation_json_data: str):
+    def forward(self, observation_json_data: str):
 
         URL_ALL = "https://api.thingspeak.com/update.json"
 
@@ -49,15 +53,15 @@ class ThingsPeakClient:
                 "field8": None
             })
 
-        print(f'ThingsPeak Client request with: {payload}')
+        logging.info(f'ThingsPeak Client request with: {payload}')
 
-        print(f'ThingsPeak Client waiting to limit API calls')
+        logging.info(f'ThingsPeak Client waiting to limit API calls')
 
         time.sleep(30) # Limit API calls
 
         response = requests.request("POST", URL_ALL, headers=headers, data=payload)
 
-        print(f'ThingsPeak Client response : {response} {response.text}')
+        logging.info(f'ThingsPeak Client response : {response} {response.text}')
 
         return True
 
@@ -70,12 +74,12 @@ if __name__ == '__main__':
                 "latitude": 60.3692257067,
                 "longitude": 5.3505234505,
                 "temperature": 8.7,
-                "humidity": 73.0,
+                "humidity": 90.0,
                 "wind_speed": 1.0}
 
     client = ThingsPeakClient()
 
-    client.forward_all(json.dumps(obs_dict))
+    client.forward(json.dumps(obs_dict))
 
 
 

@@ -53,3 +53,6 @@ The publisher will only publish a single message on the configured topic per exe
 
 ## Weather data example
 
+### ThingsPeak
+
+Public view channel: https://thingspeak.com/channels/2161888

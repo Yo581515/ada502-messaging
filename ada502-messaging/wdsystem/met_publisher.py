@@ -53,5 +53,5 @@ if __name__ == '__main__':
 
     met_publisher = METPublisher(args.configfile, 5.3505234505, 60.3692257067)
 
-    # met_publisher.publish_latest_observation()
-    met_publisher.publish_latest_observations()
+    met_publisher.publish_latest_observation()
+    # met_publisher.publish_latest_observations()

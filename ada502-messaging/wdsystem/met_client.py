@@ -150,7 +150,6 @@ class METClient:
     def fetch_observations(self, longitude, latitude, start: datetime.datetime,
                                end: datetime.datetime) -> Observation:
 
-
         station_id = self.get_nearest_station_id(longitude, latitude)
 
         response = self.fetch_observations_raw(station_id, start, end)
