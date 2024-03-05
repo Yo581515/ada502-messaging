@@ -53,6 +53,15 @@ The publisher will only publish a single message on the configured topic per exe
 
 ## Weather data example
 
-### ThingsPeak
+### ThingsPeak Forwarder
 
 Public view channel: https://thingspeak.com/channels/2161888
+
+Running the subscriber and thingspeak forwarder:
+
+```
+python3 thingspeak_forwarder.py --configfile config-ada502-tp-fwd.yml 
+```
+
+## MongoDB forwarder
+
