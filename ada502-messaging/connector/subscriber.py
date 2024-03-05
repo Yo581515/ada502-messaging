@@ -11,7 +11,7 @@ from abc import abstractmethod
 
 import logging
 
-from config import ConfigurationException, ClientConfiguration
+from connector.configuration import ConfigurationException, ClientConfiguration
 
 # basic logging
 logging.basicConfig(filename='subscriber_client.log',

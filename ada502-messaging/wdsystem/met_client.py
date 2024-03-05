@@ -1,10 +1,11 @@
 import datetime
+import dateutil.parser
+
 import requests
 import json
 
 from pydantic import BaseModel
 from decouple import config
-import dateutil.parser
 
 
 class Observation(BaseModel):
@@ -28,8 +29,9 @@ class METClient:
         self.observations_endpoint = 'https://frost.met.no/observations/v0.jsonld'
         self.sources_endpoint = 'https://frost.met.no/sources/v0.jsonld'
 
-        self.MET_CLIENT_ID = config('MET_CLIENT_ID')
         self.MET_CLIENT_SECRET = config('MET_CLIENT_SECRET')
+        self.MET_CLIENT_ID = config('MET_CLIENT_ID')
+
 
     def send_met_request(self, parameters):
 
@@ -153,17 +155,22 @@ class METClient:
 
         response = self.fetch_observations_raw(station_id, start, end)
 
-        # print(response.text)
         observations = self.extract_observations(response.text, longitude, latitude)
 
         return observations
 
-    def fetch_latest_observation(self, longitude, latitude) -> Observation:
+    def fetch_latest_observations(self, longitude, latitude) -> list[Observation]:
 
         start = datetime.datetime.now() - datetime.timedelta(days=1)
         end = datetime.datetime.now()
 
         observations = self.fetch_observations(longitude, latitude, start, end)
+
+        return observations
+
+    def fetch_latest_observation(self, longitude, latitude) -> Observation:
+
+        observations = self.fetch_latest_observations(longitude, latitude)
 
         latest = observations[-1]
 
@@ -174,7 +181,13 @@ if __name__ == '__main__':
 
     client = METClient()
 
+    observations = client.fetch_latest_observations(5.3505234505, 60.3692257067)
+
+    print(observations)
+
     latest = client.fetch_latest_observation(5.3505234505, 60.3692257067)
 
-    print(latest.to_json_data())
+    print(latest)
+
+
 

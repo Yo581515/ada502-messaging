@@ -7,7 +7,7 @@ import os
 
 import logging
 
-from config import ConfigurationException, ClientConfiguration
+from connector.configuration import ConfigurationException, ClientConfiguration
 
 # basic logging
 logging.basicConfig(filename='publisher_client.log',
