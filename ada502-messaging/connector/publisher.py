@@ -26,6 +26,15 @@ class PublisherClient:
         self.publisher = paho.Client(callback_api_version=paho.CallbackAPIVersion.VERSION2,
                                      client_id=client_config.CLIENT_ID, userdata=None, protocol=paho.MQTTv5)
 
+       # enable TLS for secure connection
+        self.publisher.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+
+        # set username and password
+        self.publisher.username_pw_set(self.config.USERNAME, self.config.PASSWORD)
+
+        self.publisher.on_connect = self.on_connect
+        self.publisher.on_publish = self.on_publish
+
     def on_connect(self, client, userdata, flags, rc, properties=None):
         logging.info(f'on_connect: CONNACK {rc}')
 
@@ -33,15 +42,6 @@ class PublisherClient:
         logging.info(f'on_publish: {mid} {reason_code}')
 
     def publish_one(self, message):
-
-        self.publisher.on_connect = self.on_connect
-        self.publisher.on_publish = self.on_publish
-
-        # enable TLS for secure connection
-        self.publisher.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
-
-        # set username and password
-        self.publisher.username_pw_set(self.config.USERNAME, self.config.PASSWORD)
 
         logging.info("Publisher client connecting ...")
 
