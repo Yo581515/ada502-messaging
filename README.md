@@ -58,9 +58,24 @@ The publisher will only publish a single message on the configured topic per exe
 
 ## Weather data example
 
-### ThingsPeak Forwarder
+Credentials for this example must be placed in an .env file in the `ada502-messaging` folder and with the following content
 
-Public view channel: https://thingspeak.com/channels/2161888
+```
+BROKER_USERNAME=
+BROKER_PASSWORD=
+
+MET_CLIENT_ID=
+MET_CLIENT_SECRET=
+
+THINGSPEAK_API_KEY=
+
+MONGO_DB_USER=
+MONGO_DB_PASSWORD=
+```
+
+### ThingsPeak forwarder
+
+Public view channel from lecture: https://thingspeak.com/channels/2161888
 
 Running the subscriber and thingspeak forwarder:
 
@@ -68,7 +83,6 @@ Running the subscriber and thingspeak forwarder:
 python3 thingspeak_forwarder.py --configfile config-ada502-tp-fwd.yml 
 ```
 
-Credentials for Thingspeak must be placed in an `.env` file
 
 ### MongoDB forwarder
 
@@ -76,9 +90,14 @@ Credentials for Thingspeak must be placed in an `.env` file
 python3 mongodb_forwarder.py --configfile config-ada502-mgdb-fwd.yml 
 ```
 
-Credentials for MongoDB must be placed in an `.env` file. The configuration file must be set according with the cluster, database, and collection being used.
+The configuration file must be set according with the cluster, database, and collection being used.
+
+Remember to create credentials for accessing the database and time series collection.
 
 Remember to whitelist the IP address of the machine running the forwarder in the MongoDB cluster under network access.
 
+### MET weather data publisher
 
-
+```
+python3 met_publisher.py --configfile config-ada502-met-pub.yml
+```
