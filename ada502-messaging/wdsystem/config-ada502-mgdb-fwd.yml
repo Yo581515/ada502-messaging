@@ -1,10 +1,10 @@
-BROKER_HOST: b326a3a8af7e4e10bcb3627073cbd298.s1.eu.hivemq.cloud
+BROKER_HOST: 66307877cde54201b7462d8941dcd49e.s1.eu.hivemq.cloud
 BROKER_PORT: 8883
 BROKER_TOPIC: ada502/weather
 TOPIC_QOS: 1
 CLIENT_ID: ada502mgdbfwd
 
-MONGO_DB_CLUSTER: smartoceanc01.wjmb0kf.mongodb.net
+MONGO_DB_CLUSTER: cluster0.woam8dg.mongodb.net
 MONGODB_DATABASE_NAME: ada502testdb
 MONGODB_COLLECTION_NAME: weatherdata
 
