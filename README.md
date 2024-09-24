@@ -33,7 +33,7 @@ BROKER_PASSWORD=
 The broker configuration is set in the `config-ada502.yml` file.
 
 ```
-python3 mqtt_client_broker_test.py --configfile config-ada502.yml 
+python mqtt_client_broker_test.py --configfile config-ada502.yml 
 ```
 
 ## Connector example
@@ -45,13 +45,13 @@ Running the subscriber and publisher in separate processes.
 Starting the subscriber:
 
 ```
-python3 subscriber.py --configfile config-ada502-sub.yml 
+python subscriber.py --configfile config-ada502-sub.yml 
 ```
 
 Starting the publisher:
 
 ``` 
-python3 publisher.py --configfile config-ada502-pub.yml 
+python publisher.py --configfile config-ada502-pub.yml 
 ```
 
 The publisher will only publish a single message on the configured topic per execution.
@@ -80,14 +80,14 @@ Public view channel from lecture: https://thingspeak.com/channels/2161888
 Running the subscriber and thingspeak forwarder:
 
 ```
-python3 thingspeak_forwarder.py --configfile config-ada502-tp-fwd.yml 
+python thingspeak_forwarder.py --configfile config-ada502-tp-fwd.yml 
 ```
 
 
 ### MongoDB forwarder
 
 ```
-python3 mongodb_forwarder.py --configfile config-ada502-mgdb-fwd.yml 
+python mongodb_forwarder.py --configfile config-ada502-mgdb-fwd.yml 
 ```
 
 The configuration file must be set according with the cluster, database, and collection being used.
@@ -99,5 +99,5 @@ Remember to whitelist the IP address of the machine running the forwarder in the
 ### MET weather data publisher
 
 ```
-python3 met_publisher.py --configfile config-ada502-met-pub.yml
+python met_publisher.py --configfile config-ada502-met-pub.yml
 ```
