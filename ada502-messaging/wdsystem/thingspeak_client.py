@@ -43,13 +43,13 @@ class ThingsPeakClient:
         payload = json.dumps({
                 "api_key": self.THINGSPEAK_API_KEY,
                 "created_at": timestamp,
-                "field1": temperature,
-                "field2": humidity,
-                "field3": wind_speed,
+                "field1": None,
+                "field2": None,
+                "field3": None,
                 "field4": None,
-                "field5": None,
-                "field6": None,
-                "field7": None,
+                "field5": temperature,
+                "field6": humidity,
+                "field7": wind_speed,
                 "field8": None
             })
 
@@ -57,7 +57,7 @@ class ThingsPeakClient:
 
         logging.info(f'ThingsPeak Client waiting to limit API calls')
 
-        time.sleep(30) # Limit API calls
+        time.sleep(1) # Limit API calls
 
         response = requests.request("POST", URL_ALL, headers=headers, data=payload)
 

@@ -4,6 +4,7 @@ import random
 import connector.publisher as mqtt_publisher
 import connector.configuration as mqtt_configuration
 
+
 import met_client
 
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     # met_publisher.publish_latest_observation()
 
     # if publishing all observations
-    # met_publisher.publish_latest_observations()
+    met_publisher.publish_latest_observations()
 
     # publishing with current time stamp
-    met_publisher.publish_fake_latest_observation()
+    #met_publisher.publish_fake_latest_observation()

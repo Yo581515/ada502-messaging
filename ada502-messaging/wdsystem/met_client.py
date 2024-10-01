@@ -176,9 +176,9 @@ if __name__ == '__main__':
 
     client = METClient()
 
-    observations = client.fetch_latest_observations(5.3505234505, 60.3692257067)
+    #observations = client.fetch_latest_observations(5.3505234505, 60.3692257067)
 
-    print(observations)
+    #print(observations)
 
     latest = client.fetch_latest_observation(5.3505234505, 60.3692257067)
 

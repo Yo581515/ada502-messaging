@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
     mongodb_config = get_mongodb_config(config_file)
 
-    now = datetime.datetime.now()
+    now = datetime.datetime.now() + datetime.timedelta(hours=2)
 
     obs_dict = {"time": now.astimezone().isoformat(),
                 "latitude": 60.3692257067,
